@@ -1,8 +1,7 @@
-const http = require("http");
 const fs = require("fs");
 
-const server = http.createServer((req, res) => {
-  console.log(req.url, req.method, req.headers);
+const userRequestHandler = (req, res) => {
+  console.log(req.url, req.method);
 
   if (req.url === "/") {
     res.setHeader("Content-Type", "text/html");
@@ -28,6 +27,23 @@ const server = http.createServer((req, res) => {
     req.url.toLowerCase() === "/submit-details" &&
     req.method == "POST"
   ) {
+    const body = [];
+    req.on("data", (chunk) => {
+      console.log(chunk);
+      body.push(chunk);
+    });
+    req.on("end", () => {
+      const fullBody = Buffer.concat(body).toString();
+      console.log(fullBody);
+      const params = new URLSearchParams(fullBody);
+      // const bodyObject = {};
+      // for (const [key, val] of params.entries()) {
+      //   bodyObject[key] = val;
+      // }
+      const bodyObject = Object.fromEntries(params);
+      console.log(bodyObject);
+      fs.writeFileSync("user.txt", JSON.stringify(bodyObject));
+    });
     fs.writeFileSync("user.txt", "Nishant Kumar");
     res.statusCode = 302;
     res.setHeader("Location", "/");
@@ -38,9 +54,6 @@ const server = http.createServer((req, res) => {
   res.write("<body><h1>Like / Share / Subscribe</h1></body>");
   res.write("</html>");
   res.end();
-});
+};
 
-const PORT = 3001;
-server.listen(PORT, () => {
-  console.log(`Server running on address http://localhost:${PORT}`);
-});
+module.exports = userRequestHandler;
