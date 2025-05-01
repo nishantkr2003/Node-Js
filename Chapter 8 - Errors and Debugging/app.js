@@ -1,10 +1,9 @@
-const http = require('http');
-const testingSyntax = require('./syntax')
-const runtime = require('./runtime')
-const logical = require('./logical')
+const http = require("http");
+const testingSyntax = require("./syntax");
+const runtime = require("./runtime");
+const logical = require("./logical");
 
-
-const requestHandler = require('./user');
+const requestHandler = require("./user");
 
 const server = http.createServer(requestHandler);
 
